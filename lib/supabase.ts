@@ -94,6 +94,11 @@ export async function addRecords(
   return data ?? [];
 }
 
+export async function deleteRecord(id: string): Promise<void> {
+  const { error } = await getSupabase().from("records").delete().eq("id", id);
+  if (error) throw error;
+}
+
 // Stats
 export async function getMonthlyStats(targetMonth?: string) {
   const [records, members] = await Promise.all([

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRecords, addRecords } from "@/lib/supabase";
+import { getRecords, addRecords, deleteRecord } from "@/lib/supabase";
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,6 +13,26 @@ export async function GET(request: NextRequest) {
     console.error("Failed to fetch records:", error);
     return NextResponse.json(
       { error: "Failed to fetch records" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { id } = await request.json();
+    if (!id) {
+      return NextResponse.json(
+        { error: "기록 ID가 필요합니다" },
+        { status: 400 }
+      );
+    }
+    await deleteRecord(id);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Failed to delete record:", error);
+    return NextResponse.json(
+      { error: "Failed to delete record" },
       { status: 500 }
     );
   }

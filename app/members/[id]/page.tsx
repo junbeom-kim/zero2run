@@ -87,6 +87,22 @@ export default function MemberPage() {
     loadData();
   }, [loadData]);
 
+  const handleDelete = async (recordId: string) => {
+    if (!confirm("이 기록을 삭제하시겠습니까?")) return;
+    try {
+      const res = await fetch("/api/records", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: recordId }),
+      });
+      if (res.ok) {
+        loadData();
+      }
+    } catch (error) {
+      console.error("Failed to delete record:", error);
+    }
+  };
+
   const currentMonthTotal =
     monthlyData.find((m) => m.month === currentMonth)?.total || 0;
 
@@ -141,6 +157,7 @@ export default function MemberPage() {
                 <th className="pb-2">날짜</th>
                 <th className="pb-2">거리</th>
                 <th className="pb-2">메모</th>
+                <th className="pb-2 w-10"></th>
               </tr>
             </thead>
             <tbody>
@@ -157,6 +174,14 @@ export default function MemberPage() {
                   </td>
                   <td className="py-2.5 text-gray-400 text-xs">
                     {record.memo}
+                  </td>
+                  <td className="py-2.5 text-right">
+                    <button
+                      onClick={() => handleDelete(record.id)}
+                      className="text-gray-300 hover:text-red-500 text-xs"
+                    >
+                      삭제
+                    </button>
                   </td>
                 </tr>
               ))}
