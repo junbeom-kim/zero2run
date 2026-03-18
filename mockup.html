@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zero2Run - 러닝 마일리지</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; }
+
+    /* Nav */
+    nav { background: #2d2d2d; color: #fff; padding: 16px 24px; display: flex; align-items: center; gap: 24px; }
+    nav h1 { font-size: 20px; font-weight: 700; }
+    nav a { color: #aaa; text-decoration: none; font-size: 14px; cursor: pointer; }
+    nav a:hover, nav a.active { color: #fff; }
+
+    /* Container */
+    .container { max-width: 800px; margin: 0 auto; padding: 24px 16px; }
+
+    /* Page title */
+    .page-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; }
+
+    /* Cards */
+    .card { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .card-title { font-size: 14px; color: #888; margin-bottom: 12px; font-weight: 600; }
+
+    /* Stats grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .stat-item { text-align: center; }
+    .stat-value { font-size: 28px; font-weight: 700; color: #2563eb; }
+    .stat-label { font-size: 12px; color: #888; margin-top: 4px; }
+
+    /* Member list */
+    .member-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+    .member-row:last-child { border-bottom: none; }
+    .member-row:hover { background: #f9f9f9; margin: 0 -20px; padding: 12px 20px; border-radius: 8px; }
+    .member-name { font-weight: 600; }
+    .member-km { color: #2563eb; font-weight: 600; }
+    .member-arrow { color: #ccc; }
+
+    /* Monthly chart placeholder */
+    .chart-bars { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding-top: 8px; }
+    .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .chart-bar { width: 100%; background: #2563eb; border-radius: 4px 4px 0 0; min-height: 4px; }
+    .chart-label { font-size: 11px; color: #888; }
+    .chart-value { font-size: 11px; color: #2563eb; font-weight: 600; }
+
+    /* Table */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { text-align: left; font-size: 12px; color: #888; font-weight: 600; padding: 8px 0; border-bottom: 2px solid #eee; }
+    .data-table td { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    .data-table .km { font-weight: 600; color: #2563eb; }
+    .data-table .memo { color: #888; font-size: 13px; }
+
+    /* Input form */
+    .input-section { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .input-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .input-row input { border: 1px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 14px; outline: none; }
+    .input-row input:focus { border-color: #2563eb; }
+    .input-row input[type="date"] { flex: 1.2; }
+    .input-row input[type="number"] { flex: 0.8; }
+    .input-row input[type="text"] { flex: 1.5; }
+    .btn-remove { background: none; border: none; color: #ccc; font-size: 20px; cursor: pointer; padding: 4px 8px; }
+    .btn-remove:hover { color: #e74c3c; }
+    .btn-add { background: none; border: 1px dashed #ccc; border-radius: 8px; padding: 10px; width: 100%; cursor: pointer; color: #888; font-size: 14px; margin-top: 4px; }
+    .btn-add:hover { border-color: #2563eb; color: #2563eb; }
+    .btn-submit { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 12px 24px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 12px; }
+    .btn-submit:hover { background: #1d4ed8; }
+
+    /* Page visibility */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* Badge */
+    .badge { display: inline-block; background: #e8f0fe; color: #2563eb; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-left: 8px; }
+
+    /* Back link */
+    .back-link { display: inline-flex; align-items: center; gap: 4px; color: #888; text-decoration: none; font-size: 14px; margin-bottom: 16px; cursor: pointer; }
+    .back-link:hover { color: #333; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <h1>Zero2Run</h1>
+  <a class="active" onclick="showPage('main')">전체 현황</a>
+  <a onclick="showPage('member')">회원별</a>
+</nav>
+
+<!-- 메인 화면 -->
+<div id="page-main" class="page active">
+  <div class="container">
+    <div class="page-title">2026년 3월 전체 현황</div>
+
+    <div class="card">
+      <div class="card-title">이번 달 요약</div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">156.4</div>
+          <div class="stat-label">총 거리 (km)</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">5</div>
+          <div class="stat-label">참여 회원</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">31.3</div>
+          <div class="stat-label">인당 평균 (km)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">월별 추이 (전체)</div>
+      <div class="chart-bars">
+        <div class="chart-bar-wrap">
+          <div class="chart-value">98</div>
+          <div class="chart-bar" style="height: 50%"></div>
+          <div class="chart-label">10월</div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="chart-value">120</div>
+          <div class="chart-bar" style="height: 62%"></div>
+          <div class="chart-label">11월</div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="chart-value">85</div>
+          <div class="chart-bar" style="height: 44%"></div>
+          <div class="chart-label">12월</div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="chart-value">135</div>
+          <div class="chart-bar" style="height: 70%"></div>
+          <div class="chart-label">1월</div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="chart-value">148</div>
+          <div class="chart-bar" style="height: 76%"></div>
+          <div class="chart-label">2월</div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="chart-value">156</div>
+          <div class="chart-bar" style="height: 80%"></div>
+          <div class="chart-label">3월</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">회원별 현황</div>
+      <div class="member-row" onclick="showPage('member')">
+        <span class="member-name">김준범</span>
+        <span><span class="member-km">42.5 km</span> <span class="member-arrow">›</span></span>
+      </div>
+      <div class="member-row" onclick="showPage('member')">
+        <span class="member-name">이수진</span>
+        <span><span class="member-km">38.2 km</span> <span class="member-arrow">›</span></span>
+      </div>
+      <div class="member-row" onclick="showPage('member')">
+        <span class="member-name">박민호</span>
+        <span><span class="member-km">32.1 km</span> <span class="member-arrow">›</span></span>
+      </div>
+      <div class="member-row" onclick="showPage('member')">
+        <span class="member-name">정하은</span>
+        <span><span class="member-km">25.8 km</span> <span class="member-arrow">›</span></span>
+      </div>
+      <div class="member-row" onclick="showPage('member')">
+        <span class="member-name">최영준</span>
+        <span><span class="member-km">17.8 km</span> <span class="member-arrow">›</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 회원별 화면 -->
+<div id="page-member" class="page">
+  <div class="container">
+    <a class="back-link" onclick="showPage('main')">‹ 전체 현황</a>
+    <div class="page-title">김준범 <span class="badge">이번 달 42.5km</span></div>
+
+    <div class="card">
+      <div class="card-title">월별 추이</div>
+      <div class="chart-bars">
+        <div class="chart-bar-wrap">
+          <div class="chart-value">18</div>
+          <div class="chart-bar" style="height: 40%"></div>
+          <div class="chart-label">10월</div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="chart-value">25</div>
+          <div class="chart-bar" style="height: 56%"></div>
+          <div class="chart-label">11월</div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="chart-value">15</div>
+          <div class="chart-bar" style="height: 33%"></div>
+          <div class="chart-label">12월</div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="chart-value">30</div>
+          <div class="chart-bar" style="height: 67%"></div>
+          <div class="chart-label">1월</div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="chart-value">38</div>
+          <div class="chart-bar" style="height: 84%"></div>
+          <div class="chart-label">2월</div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="chart-value">42.5</div>
+          <div class="chart-bar" style="height: 95%"></div>
+          <div class="chart-label">3월</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 입력 폼 -->
+    <div class="input-section">
+      <div class="card-title">기록 추가</div>
+      <div id="input-rows">
+        <div class="input-row">
+          <input type="date" value="2026-03-18">
+          <input type="number" placeholder="km" step="0.1" min="0" style="width:80px">
+          <input type="text" placeholder="메모 (선택)">
+          <button class="btn-remove" onclick="removeRow(this)" title="삭제">×</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addRow()">+ 행 추가</button>
+      <button class="btn-submit">저장</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">3월 기록</div>
+      <table class="data-table">
+        <thead>
+          <tr><th>날짜</th><th>거리</th><th>메모</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>03/18</td><td class="km">5.2 km</td><td class="memo">한강 러닝</td></tr>
+          <tr><td>03/16</td><td class="km">7.0 km</td><td class="memo">여의도 공원</td></tr>
+          <tr><td>03/14</td><td class="km">3.5 km</td><td class="memo">동네 조깅</td></tr>
+          <tr><td>03/11</td><td class="km">10.3 km</td><td class="memo">반포 한강공원</td></tr>
+          <tr><td>03/08</td><td class="km">6.2 km</td><td class="memo"></td></tr>
+          <tr><td>03/05</td><td class="km">4.8 km</td><td class="memo">퇴근 후 러닝</td></tr>
+          <tr><td>03/02</td><td class="km">5.5 km</td><td class="memo">아침 러닝</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+    if (page === 'main') document.querySelectorAll('nav a')[0].classList.add('active');
+    else document.querySelectorAll('nav a')[1].classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function addRow() {
+    const today = new Date().toISOString().split('T')[0];
+    const row = document.createElement('div');
+    row.className = 'input-row';
+    row.innerHTML = `
+      <input type="date" value="${today}">
+      <input type="number" placeholder="km" step="0.1" min="0" style="width:80px">
+      <input type="text" placeholder="메모 (선택)">
+      <button class="btn-remove" onclick="removeRow(this)" title="삭제">×</button>
+    `;
+    document.getElementById('input-rows').appendChild(row);
+  }
+
+  function removeRow(btn) {
+    const rows = document.getElementById('input-rows');
+    if (rows.children.length > 1) {
+      btn.parentElement.remove();
+    }
+  }
+</script>
+
+</body>
+</html>
