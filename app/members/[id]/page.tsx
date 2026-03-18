@@ -23,6 +23,22 @@ interface MonthlyData {
   total: number;
 }
 
+function getCurrentMonth() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function getAdjacentMonth(month: string, offset: number) {
+  const [year, mon] = month.split("-").map(Number);
+  const d = new Date(year, mon - 1 + offset, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function formatMonth(month: string) {
+  const [year, m] = month.split("-");
+  return `${year}년 ${parseInt(m)}월`;
+}
+
 export default function MemberPage() {
   const params = useParams();
   const id = params.id as string;
@@ -31,40 +47,33 @@ export default function MemberPage() {
   const [records, setRecords] = useState<Record[]>([]);
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const now = new Date();
-  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-  const currentMonthLabel = `${now.getFullYear()}년 ${now.getMonth() + 1}월`;
+  const [month, setMonth] = useState(getCurrentMonth);
 
   const loadData = useCallback(async () => {
     try {
-      const [memberRes, recordsRes, statsRes] = await Promise.all([
+      const [memberRes, recordsRes, allRecordsRes] = await Promise.all([
         fetch(`/api/members/${id}`),
-        fetch(`/api/records?memberId=${id}&month=${currentMonth}`),
-        fetch(`/api/stats`),
+        fetch(`/api/records?memberId=${id}&month=${month}`),
+        fetch(`/api/records?memberId=${id}`),
       ]);
 
       const memberData = await memberRes.json();
       const recordsData = await recordsRes.json();
-      const statsData = await statsRes.json();
+      const allRecords = await allRecordsRes.json();
 
       setMember(memberData);
       setRecords(recordsData);
 
-      // Extract this member's monthly data from stats
-      // Or fetch all records for this member to compute monthly
-      const allRecordsRes = await fetch(`/api/records?memberId=${id}`);
-      const allRecords = await allRecordsRes.json();
-
-      const monthlyTotals: { [month: string]: number } = {};
+      const monthlyTotals: { [m: string]: number } = {};
       for (const r of allRecords) {
-        const month = r.date.slice(0, 7);
-        monthlyTotals[month] = (monthlyTotals[month] || 0) + r.distance_km;
+        const m = r.date.slice(0, 7);
+        monthlyTotals[m] = (monthlyTotals[m] || 0) + r.distance_km;
       }
 
+      const [year, mon] = month.split("-").map(Number);
       const months: string[] = [];
       for (let i = 5; i >= 0; i--) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const d = new Date(year, mon - 1 - i, 1);
         months.push(
           `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
         );
@@ -81,7 +90,7 @@ export default function MemberPage() {
     } finally {
       setLoading(false);
     }
-  }, [id, currentMonth]);
+  }, [id, month]);
 
   useEffect(() => {
     loadData();
@@ -103,10 +112,14 @@ export default function MemberPage() {
     }
   };
 
-  const currentMonthTotal =
-    monthlyData.find((m) => m.month === currentMonth)?.total || 0;
+  const selectedMonthTotal =
+    monthlyData.find((m) => m.month === month)?.total || 0;
+  const isCurrentMonth = month === getCurrentMonth();
 
-  if (loading) {
+  const goToPrevMonth = () => setMonth((m) => getAdjacentMonth(m, -1));
+  const goToNextMonth = () => setMonth((m) => getAdjacentMonth(m, 1));
+
+  if (loading && !member) {
     return (
       <div className="max-w-[800px] mx-auto p-6 text-center text-gray-400">
         불러오는 중...
@@ -133,7 +146,7 @@ export default function MemberPage() {
       <h2 className="text-xl font-bold mb-5">
         {member.name}
         <span className="inline-block bg-blue-50 text-blue-600 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">
-          이번 달 {currentMonthTotal}km
+          {formatMonth(month)} {selectedMonthTotal}km
         </span>
       </h2>
 
@@ -147,8 +160,23 @@ export default function MemberPage() {
       <RecordForm memberId={id} onSaved={loadData} />
 
       <div className="bg-white rounded-xl p-5 shadow-sm">
-        <div className="text-sm text-gray-400 font-semibold mb-3">
-          {currentMonthLabel} 기록
+        <div className="flex items-center justify-between mb-3">
+          <button
+            onClick={goToPrevMonth}
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 text-lg"
+          >
+            &lsaquo;
+          </button>
+          <div className="text-sm text-gray-400 font-semibold">
+            {formatMonth(month)} 기록
+          </div>
+          <button
+            onClick={goToNextMonth}
+            disabled={isCurrentMonth}
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 text-lg disabled:opacity-0 disabled:cursor-default"
+          >
+            &rsaquo;
+          </button>
         </div>
         {records.length > 0 ? (
           <table className="w-full">
@@ -189,7 +217,7 @@ export default function MemberPage() {
           </table>
         ) : (
           <div className="text-gray-400 text-sm text-center py-4">
-            이번 달 기록이 없습니다
+            이 달의 기록이 없습니다
           </div>
         )}
       </div>
