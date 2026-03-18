@@ -95,7 +95,7 @@ export async function addRecords(
 }
 
 // Stats
-export async function getMonthlyStats() {
+export async function getMonthlyStats(targetMonth?: string) {
   const [records, members] = await Promise.all([
     getRecords(),
     getMembers(),
@@ -116,7 +116,7 @@ export async function getMonthlyStats() {
   }
 
   const now = new Date();
-  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const currentMonth = targetMonth || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
   const currentMonthRecords = records.filter((r) =>
     r.date.startsWith(currentMonth)
@@ -129,9 +129,10 @@ export async function getMonthlyStats() {
     currentMonthRecords.map((r) => r.member_id)
   );
 
+  const [year, mon] = currentMonth.split("-").map(Number);
   const months: string[] = [];
   for (let i = 5; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const d = new Date(year, mon - 1 - i, 1);
     months.push(
       `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
     );

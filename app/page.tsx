@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import StatsCard from "@/components/StatsCard";
 import MonthlyChart from "@/components/MonthlyChart";
@@ -14,24 +14,45 @@ interface Stats {
   memberStats: { id: string; name: string; currentMonthKm: number }[];
 }
 
-function formatCurrentMonth(month: string) {
+function formatMonth(month: string) {
   const [year, m] = month.split("-");
   return `${year}년 ${parseInt(m)}월`;
+}
+
+function getAdjacentMonth(month: string, offset: number) {
+  const [year, mon] = month.split("-").map(Number);
+  const d = new Date(year, mon - 1 + offset, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function getCurrentMonth() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 }
 
 export default function MainPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [month, setMonth] = useState(getCurrentMonth);
 
-  useEffect(() => {
-    fetch("/api/stats")
+  const fetchStats = useCallback((m: string) => {
+    setLoading(true);
+    fetch(`/api/stats?month=${m}`)
       .then((res) => res.json())
       .then(setStats)
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
+  useEffect(() => {
+    fetchStats(month);
+  }, [month, fetchStats]);
+
+  const goToPrevMonth = () => setMonth((m) => getAdjacentMonth(m, -1));
+  const goToNextMonth = () => setMonth((m) => getAdjacentMonth(m, 1));
+  const isCurrentMonth = month === getCurrentMonth();
+
+  if (loading && !stats) {
     return (
       <div className="max-w-[800px] mx-auto p-6 text-center text-gray-400">
         불러오는 중...
@@ -49,9 +70,24 @@ export default function MainPage() {
 
   return (
     <div className="max-w-[800px] mx-auto p-6">
-      <h2 className="text-xl font-bold mb-5">
-        {formatCurrentMonth(stats.currentMonth)} 전체 현황
-      </h2>
+      <div className="flex items-center justify-between mb-5">
+        <button
+          onClick={goToPrevMonth}
+          className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 text-lg"
+        >
+          &lsaquo;
+        </button>
+        <h2 className="text-xl font-bold">
+          {formatMonth(stats.currentMonth)} 전체 현황
+        </h2>
+        <button
+          onClick={goToNextMonth}
+          disabled={isCurrentMonth}
+          className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 text-lg disabled:opacity-0 disabled:cursor-default"
+        >
+          &rsaquo;
+        </button>
+      </div>
 
       <StatsCard
         totalDistance={stats.totalDistance}
