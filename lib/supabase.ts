@@ -154,7 +154,9 @@ export async function getMonthlyStats(targetMonth?: string) {
     currentMonthKm:
       Math.round((memberMonthly[m.id]?.[currentMonth] || 0) * 10) / 10,
   }));
-  memberStats.sort((a, b) => a.name.localeCompare(b.name, "ko"));
+  memberStats.sort((a, b) =>
+    b.currentMonthKm - a.currentMonthKm || a.name.localeCompare(b.name, "ko")
+  );
 
   return {
     currentMonth,
