@@ -17,9 +17,8 @@ export default function RootLayout({
     <html lang="ko">
       <body className="antialiased">
         <nav className="bg-[#2d2d2d] text-white px-6 py-4 flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.jpg" alt="Zero2Run" width={36} height={36} className="rounded" />
-            <span className="text-xl font-bold">Zero2Run</span>
+          <Link href="/">
+            <Image src="/logo.jpg" alt="Zero2Run" width={48} height={48} className="rounded" />
           </Link>
           <Link href="/" className="text-sm text-gray-400 hover:text-white">
             전체 현황
