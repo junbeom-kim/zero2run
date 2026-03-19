@@ -23,6 +23,9 @@ export default function RootLayout({
           <Link href="/" className="text-sm text-gray-400 hover:text-white">
             전체 현황
           </Link>
+          <Link href="/hall-of-fame" className="text-sm text-gray-400 hover:text-white">
+            명예의 전당
+          </Link>
           <Link
             href="/admin"
             className="text-sm text-gray-400 hover:text-white ml-auto"
