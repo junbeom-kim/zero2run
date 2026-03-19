@@ -5,6 +5,7 @@ export interface HallOfFameEntry {
   date: string;
   event: {
     date: string;
+    sortDate: string;
     name: string;
   };
   message: string;
@@ -19,6 +20,7 @@ const hallOfFameEntries: HallOfFameEntry[] = [
     date: "2025-06-21",
     event: {
       date: "2025년 6월 1일",
+      sortDate: "2025-06-01",
       name: "제22회 새벽강변 국제마라톤대회",
     },
     message:
@@ -32,6 +34,7 @@ const hallOfFameEntries: HallOfFameEntry[] = [
     date: "2025-11-05",
     event: {
       date: "2025년 9월 14일",
+      sortDate: "2025-09-14",
       name: "2025 마블런 서울",
     },
     message:
@@ -46,6 +49,7 @@ const hallOfFameEntries: HallOfFameEntry[] = [
     date: "2025-11-05",
     event: {
       date: "2025년 9월 14일",
+      sortDate: "2025-09-14",
       name: "2025 마블런 서울",
     },
     message:
@@ -59,6 +63,7 @@ const hallOfFameEntries: HallOfFameEntry[] = [
     date: "2025-11-05",
     event: {
       date: "2025년 10월 12일",
+      sortDate: "2025-10-12",
       name: "2025 SEOUL RACE",
     },
     message:
@@ -72,6 +77,7 @@ const hallOfFameEntries: HallOfFameEntry[] = [
     date: "2025-11-05",
     event: {
       date: "2025년 10월 3일",
+      sortDate: "2025-10-03",
       name: "제22회 강남국제평화마라톤",
     },
     message:

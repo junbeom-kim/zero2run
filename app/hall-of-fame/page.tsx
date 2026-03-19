@@ -19,7 +19,7 @@ export default function HallOfFamePage() {
       <h2 className="text-xl font-bold mb-5">명예의 전당</h2>
 
       <div className="flex flex-col gap-4">
-        {[...hallOfFameEntries].sort((a, b) => b.id - a.id).map((entry) => {
+        {[...hallOfFameEntries].sort((a, b) => b.event.sortDate.localeCompare(a.event.sortDate)).map((entry) => {
           const style = categoryStyle[entry.category];
           return (
             <div key={entry.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
