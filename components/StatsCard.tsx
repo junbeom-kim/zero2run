@@ -10,24 +10,32 @@ export default function StatsCard({
   avgDistance,
 }: StatsCardProps) {
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm">
-      <div className="text-sm text-gray-400 font-semibold mb-3">
-        이번 달 요약
+    <div className="grid grid-cols-3 gap-3">
+      <div className="bg-white rounded-2xl p-5 border border-[#e8e8e4]">
+        <div className="text-xs text-[#a3a3a3] font-medium mb-2 tracking-wide">
+          총 거리
+        </div>
+        <div className="text-2xl font-bold text-[#0d9668] tabular-nums tracking-tight">
+          {totalDistance}
+          <span className="text-sm font-medium text-[#a3a3a3] ml-1">km</span>
+        </div>
       </div>
-      <div className="grid grid-cols-3 gap-4 text-center">
-        <div>
-          <div className="text-3xl font-bold text-blue-600">{totalDistance}</div>
-          <div className="text-xs text-gray-400 mt-1">총 거리 (km)</div>
+      <div className="bg-white rounded-2xl p-5 border border-[#e8e8e4]">
+        <div className="text-xs text-[#a3a3a3] font-medium mb-2 tracking-wide">
+          참여 회원
         </div>
-        <div>
-          <div className="text-3xl font-bold text-blue-600">
-            {participatingCount}
-          </div>
-          <div className="text-xs text-gray-400 mt-1">참여 회원</div>
+        <div className="text-2xl font-bold text-[#1a1a1a] tabular-nums tracking-tight">
+          {participatingCount}
+          <span className="text-sm font-medium text-[#a3a3a3] ml-1">명</span>
         </div>
-        <div>
-          <div className="text-3xl font-bold text-blue-600">{avgDistance}</div>
-          <div className="text-xs text-gray-400 mt-1">인당 평균 (km)</div>
+      </div>
+      <div className="bg-white rounded-2xl p-5 border border-[#e8e8e4]">
+        <div className="text-xs text-[#a3a3a3] font-medium mb-2 tracking-wide">
+          인당 평균
+        </div>
+        <div className="text-2xl font-bold text-[#1a1a1a] tabular-nums tracking-tight">
+          {avgDistance}
+          <span className="text-sm font-medium text-[#a3a3a3] ml-1">km</span>
         </div>
       </div>
     </div>

@@ -121,7 +121,7 @@ export default function MemberPage() {
 
   if (loading && !member) {
     return (
-      <div className="max-w-[800px] mx-auto p-6 text-center text-gray-400">
+      <div className="max-w-[800px] mx-auto p-6 text-center text-[#a3a3a3] py-20">
         불러오는 중...
       </div>
     );
@@ -129,51 +129,55 @@ export default function MemberPage() {
 
   if (!member) {
     return (
-      <div className="max-w-[800px] mx-auto p-6 text-center text-gray-400">
+      <div className="max-w-[800px] mx-auto p-6 text-center text-[#a3a3a3] py-20">
         회원을 찾을 수 없습니다
       </div>
     );
   }
 
   return (
-    <div className="max-w-[800px] mx-auto p-6">
+    <div className="max-w-[800px] mx-auto px-5 py-8">
       <Link
         href="/"
-        className="inline-flex items-center gap-1 text-gray-400 text-sm mb-4 hover:text-gray-600"
+        className="inline-flex items-center gap-1 text-[#a3a3a3] text-sm mb-5 hover:text-[#6b6b6b] transition-colors"
       >
         &lsaquo; 전체 현황
       </Link>
-      <h2 className="text-xl font-bold mb-5">
-        {member.name}
-        <span className="inline-block bg-blue-50 text-blue-600 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">
+
+      <div className="flex items-baseline gap-3 mb-6">
+        <h2 className="text-lg font-bold tracking-tight">{member.name}</h2>
+        <span className="text-sm font-semibold text-[#0d9668] tabular-nums">
           {formatMonth(month)} {selectedMonthTotal}km
         </span>
-      </h2>
+      </div>
 
-      <div className="bg-white rounded-xl p-5 shadow-sm mb-4">
-        <div className="text-sm text-gray-400 font-semibold mb-3">
+      {/* Monthly trend */}
+      <div className="bg-white rounded-2xl p-5 border border-[#e8e8e4] mb-4">
+        <div className="text-xs text-[#a3a3a3] font-medium mb-4 tracking-wide">
           월별 추이
         </div>
         <MonthlyChart data={monthlyData} />
       </div>
 
+      {/* Record form */}
       <RecordForm memberId={id} onSaved={loadData} />
 
-      <div className="bg-white rounded-xl p-5 shadow-sm">
-        <div className="flex items-center justify-between mb-3">
+      {/* Records table */}
+      <div className="bg-white rounded-2xl p-5 border border-[#e8e8e4]">
+        <div className="flex items-center justify-between mb-4">
           <button
             onClick={goToPrevMonth}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 text-lg"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#f0f0ec] text-[#6b6b6b] text-lg transition-colors"
           >
             &lsaquo;
           </button>
-          <div className="text-sm text-gray-400 font-semibold">
+          <div className="text-xs text-[#a3a3a3] font-medium tracking-wide">
             {formatMonth(month)} 기록
           </div>
           <button
             onClick={goToNextMonth}
             disabled={isCurrentMonth}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 text-lg disabled:opacity-0 disabled:cursor-default"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#f0f0ec] text-[#6b6b6b] text-lg transition-colors disabled:opacity-0 disabled:cursor-default"
           >
             &rsaquo;
           </button>
@@ -181,32 +185,32 @@ export default function MemberPage() {
         {records.length > 0 ? (
           <table className="w-full">
             <thead>
-              <tr className="text-left text-xs text-gray-400 font-semibold border-b-2 border-gray-100">
-                <th className="pb-2">날짜</th>
-                <th className="pb-2">거리</th>
-                <th className="pb-2">메모</th>
-                <th className="pb-2 w-10"></th>
+              <tr className="text-left text-[11px] text-[#a3a3a3] font-medium border-b border-[#e8e8e4]">
+                <th className="pb-2.5">날짜</th>
+                <th className="pb-2.5">거리</th>
+                <th className="pb-2.5">메모</th>
+                <th className="pb-2.5 w-10"></th>
               </tr>
             </thead>
             <tbody>
               {records.map((record) => (
                 <tr
                   key={record.id}
-                  className="border-b border-gray-50 text-sm"
+                  className="border-b border-[#f5f5f0] last:border-b-0 text-sm"
                 >
-                  <td className="py-2.5">
+                  <td className="py-3 tabular-nums text-[#6b6b6b]">
                     {record.date.slice(5).replace("-", "/")}
                   </td>
-                  <td className="py-2.5 text-blue-600 font-semibold">
+                  <td className="py-3 text-[#0d9668] font-semibold tabular-nums">
                     {record.distance_km} km
                   </td>
-                  <td className="py-2.5 text-gray-400 text-xs">
+                  <td className="py-3 text-[#a3a3a3] text-xs">
                     {record.memo}
                   </td>
-                  <td className="py-2.5 text-right">
+                  <td className="py-3 text-right">
                     <button
                       onClick={() => handleDelete(record.id)}
-                      className="text-gray-300 hover:text-red-500 text-xs"
+                      className="text-[#d1d5db] hover:text-red-500 text-xs transition-colors"
                     >
                       삭제
                     </button>
@@ -216,7 +220,7 @@ export default function MemberPage() {
             </tbody>
           </table>
         ) : (
-          <div className="text-gray-400 text-sm text-center py-4">
+          <div className="text-[#a3a3a3] text-sm text-center py-8">
             이 달의 기록이 없습니다
           </div>
         )}

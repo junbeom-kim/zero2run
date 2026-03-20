@@ -80,8 +80,10 @@ export default function RecordForm({ memberId, onSaved }: RecordFormProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm mb-4">
-      <div className="text-sm text-gray-400 font-semibold mb-3">기록 추가</div>
+    <div className="bg-white rounded-2xl p-5 border border-[#e8e8e4] mb-4">
+      <div className="text-xs text-[#a3a3a3] font-medium mb-4 tracking-wide">
+        기록 추가
+      </div>
       <div className="space-y-2">
         {rows.map((row, i) => (
           <div key={i} className="flex gap-2 items-center">
@@ -89,7 +91,7 @@ export default function RecordForm({ memberId, onSaved }: RecordFormProps) {
               type="date"
               value={row.date}
               onChange={(e) => updateRow(i, "date", e.target.value)}
-              className="flex-[1.2] border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-blue-600"
+              className="flex-[1.2] border border-[#e8e8e4] rounded-lg px-3 py-2.5 text-sm bg-white focus:border-[#0d9668] transition-colors"
             />
             <input
               type="number"
@@ -98,18 +100,18 @@ export default function RecordForm({ memberId, onSaved }: RecordFormProps) {
               min="0"
               value={row.distance_km}
               onChange={(e) => updateRow(i, "distance_km", e.target.value)}
-              className="w-20 border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-blue-600"
+              className="w-20 border border-[#e8e8e4] rounded-lg px-3 py-2.5 text-sm bg-white focus:border-[#0d9668] tabular-nums transition-colors"
             />
             <input
               type="text"
               placeholder="메모 (선택)"
               value={row.memo}
               onChange={(e) => updateRow(i, "memo", e.target.value)}
-              className="flex-[1.5] border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-blue-600"
+              className="flex-[1.5] border border-[#e8e8e4] rounded-lg px-3 py-2.5 text-sm bg-white focus:border-[#0d9668] transition-colors"
             />
             <button
               onClick={() => removeRow(i)}
-              className="text-gray-300 hover:text-red-500 text-xl px-2"
+              className="text-[#d1d5db] hover:text-red-500 text-lg px-1.5 transition-colors"
             >
               &times;
             </button>
@@ -118,7 +120,7 @@ export default function RecordForm({ memberId, onSaved }: RecordFormProps) {
       </div>
       <button
         onClick={addRow}
-        className="w-full mt-2 border border-dashed border-gray-300 rounded-lg py-2.5 text-sm text-gray-400 hover:border-blue-600 hover:text-blue-600"
+        className="w-full mt-3 border border-dashed border-[#d1d5db] rounded-lg py-2.5 text-sm text-[#a3a3a3] hover:border-[#0d9668] hover:text-[#0d9668] transition-colors"
       >
         + 행 추가
       </button>
@@ -128,7 +130,7 @@ export default function RecordForm({ memberId, onSaved }: RecordFormProps) {
       <button
         onClick={handleSubmit}
         disabled={saving}
-        className="w-full mt-3 bg-blue-600 text-white rounded-lg py-3 text-sm font-semibold hover:bg-blue-700 disabled:opacity-50"
+        className="w-full mt-3 bg-[#0d9668] text-white rounded-lg py-3 text-sm font-semibold hover:bg-[#0a7d56] active:bg-[#065f46] disabled:opacity-50 transition-colors"
       >
         {saving ? "저장 중..." : "저장"}
       </button>

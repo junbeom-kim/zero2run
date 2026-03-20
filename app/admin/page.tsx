@@ -82,10 +82,10 @@ export default function AdminPage() {
 
   if (!authenticated) {
     return (
-      <div className="max-w-[800px] mx-auto p-6">
-        <h2 className="text-xl font-bold mb-5">관리자</h2>
-        <div className="bg-white rounded-xl p-5 shadow-sm">
-          <div className="text-sm text-gray-400 font-semibold mb-3">
+      <div className="max-w-[800px] mx-auto px-5 py-8">
+        <h2 className="text-lg font-bold tracking-tight mb-6">관리</h2>
+        <div className="bg-white rounded-2xl p-5 border border-[#e8e8e4]">
+          <div className="text-xs text-[#a3a3a3] font-medium mb-4 tracking-wide">
             비밀번호 입력
           </div>
           <div className="flex gap-2">
@@ -95,11 +95,11 @@ export default function AdminPage() {
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               placeholder="관리자 비밀번호"
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-blue-600"
+              className="flex-1 border border-[#e8e8e4] rounded-lg px-3 py-2.5 text-sm bg-white focus:border-[#0d9668] transition-colors"
             />
             <button
               onClick={handleLogin}
-              className="bg-blue-600 text-white rounded-lg px-6 py-2.5 text-sm font-semibold hover:bg-blue-700"
+              className="bg-[#0d9668] text-white rounded-lg px-6 py-2.5 text-sm font-semibold hover:bg-[#0a7d56] active:bg-[#065f46] transition-colors"
             >
               확인
             </button>
@@ -110,11 +110,11 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="max-w-[800px] mx-auto p-6">
-      <h2 className="text-xl font-bold mb-5">관리자</h2>
+    <div className="max-w-[800px] mx-auto px-5 py-8">
+      <h2 className="text-lg font-bold tracking-tight mb-6">관리</h2>
 
-      <div className="bg-white rounded-xl p-5 shadow-sm mb-4">
-        <div className="text-sm text-gray-400 font-semibold mb-3">
+      <div className="bg-white rounded-2xl p-5 border border-[#e8e8e4] mb-4">
+        <div className="text-xs text-[#a3a3a3] font-medium mb-4 tracking-wide">
           회원 등록
         </div>
         <div className="flex gap-2">
@@ -124,37 +124,43 @@ export default function AdminPage() {
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAddMember()}
             placeholder="회원 이름"
-            className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-blue-600"
+            className="flex-1 border border-[#e8e8e4] rounded-lg px-3 py-2.5 text-sm bg-white focus:border-[#0d9668] transition-colors"
           />
           <button
             onClick={handleAddMember}
             disabled={loading}
-            className="bg-blue-600 text-white rounded-lg px-6 py-2.5 text-sm font-semibold hover:bg-blue-700 disabled:opacity-50"
+            className="bg-[#0d9668] text-white rounded-lg px-6 py-2.5 text-sm font-semibold hover:bg-[#0a7d56] active:bg-[#065f46] disabled:opacity-50 transition-colors"
           >
             {loading ? "등록 중..." : "등록"}
           </button>
         </div>
         {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
         {success && (
-          <div className="text-green-600 text-sm mt-2">{success}</div>
+          <div className="text-[#0d9668] text-sm mt-2">{success}</div>
         )}
       </div>
 
-      <div className="bg-white rounded-xl p-5 shadow-sm">
-        <div className="text-sm text-gray-400 font-semibold mb-3">
+      <div className="bg-white rounded-2xl border border-[#e8e8e4] overflow-hidden">
+        <div className="text-xs text-[#a3a3a3] font-medium px-5 pt-5 pb-2 tracking-wide">
           등록된 회원 ({members.length}명)
         </div>
-        {members.map((member) => (
+        {members.map((member, i) => (
           <div
             key={member.id}
-            className="flex justify-between items-center py-3 border-b border-gray-100 last:border-b-0"
+            className="flex justify-between items-center py-3.5 px-5"
+            style={{
+              borderBottom:
+                i < members.length - 1 ? "1px solid #f0f0ec" : "none",
+            }}
           >
-            <span className="font-semibold">{member.name}</span>
-            <span className="text-xs text-gray-400">{member.created_at}</span>
+            <span className="font-semibold text-[15px]">{member.name}</span>
+            <span className="text-xs text-[#a3a3a3] tabular-nums">
+              {member.created_at}
+            </span>
           </div>
         ))}
         {members.length === 0 && (
-          <div className="text-gray-400 text-sm text-center py-4">
+          <div className="text-[#a3a3a3] text-sm text-center py-8">
             등록된 회원이 없습니다
           </div>
         )}
