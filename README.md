@@ -6,6 +6,12 @@
 - 월별 추이 차트
 - 명예의 전당 (마라톤 완주 기록)
 
+## 스크린샷
+
+| 전체 현황 | 회원 상세 | 명예의 전당 |
+|:---:|:---:|:---:|
+| ![전체 현황](docs/screenshot-main.png) | ![회원 상세](docs/screenshot-member.png) | ![명예의 전당](docs/screenshot-hall.png) |
+
 ## 설치 방법
 
 ### 1. Supabase 프로젝트 생성
